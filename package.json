@@ -1,0 +1,6 @@
+{
+  "name": "dynamic-portfolio",
+  "dependencies": {
+    "@netlify/neon": "^0.1.0"
+  }
+}
