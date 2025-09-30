@@ -1,9 +1,9 @@
 [build]
-  functions = "netlify/functions"
-  publish = "."
-
-[functions]
-  directory = "netlify/functions"
+  publish = "dist"
+  command = "npm run build"
 
 [[plugins]]
-  package = "@netlify/plugin-functions-core"
+  package = "@netlify/plugin-lighthouse"
+
+[[plugins]]
+  package = "@netlify/plugin-emails"
