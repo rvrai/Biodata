@@ -159,11 +159,18 @@ export const PortfolioProvider = ({ children }) => {
           socialData = socialResult.data || [];
         } catch (dbError) {
           console.warn('Supabase fetch failed, falling back to cache file:', dbError);
-          const cacheRes = await fetch('/cache/data.json');
-          if (!cacheRes.ok) throw new Error('Failed to fetch fallback cache file.');
-          const cacheData = await cacheRes.json();
-          entries = cacheData.entries;
-          sections = cacheData.sections;
+          try {
+            const cacheRes = await fetch('/cache/data.json');
+            if (cacheRes.ok) {
+              const cacheData = await cacheRes.json();
+              entries = cacheData.entries;
+              sections = cacheData.sections;
+            } else {
+              console.warn('Fallback cache file returned not ok status. Using local static data.');
+            }
+          } catch (cacheError) {
+            console.warn('Fallback cache file fetch failed as well, using LOCAL_DATA fallback:', cacheError);
+          }
         }
         
         if (entries && entries.length > 0) {
@@ -220,8 +227,9 @@ export const PortfolioProvider = ({ children }) => {
           });
         }
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err.message);
+        console.error('Error fetching data, using LOCAL_DATA fallback:', err);
+        setData(LOCAL_DATA);
+        setError(null);
       } finally {
         setLoading(false);
       }
