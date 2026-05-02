@@ -1,0 +1,60 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/venv/
+
+# Environment and Secret files
+.env
+.env.*
+frontend/.env
+frontend/.env.*
+backend/.env
+backend/.env.*
+*.env*
+secrets*
+*credentials*
+*.p12
+*.key
+*.pem
+*.pfx
+
+# Dot folders and files (excluding .gitignore and .git/)
+.*
+!.gitignore
+!.github/
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+db.sqlite3
+
+# Cache
+frontend/public/cache/
+
+# Gemini / Agent files
+.gemini/
+.claude/
+.chat/
+.reference/
+.train/
+
+# GitNexus
+.gitnexus/
+
+# Logs
+*.log
+npm-debug.log*
