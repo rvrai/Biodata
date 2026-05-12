@@ -7,7 +7,7 @@ const SplashScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 2000); // Show splash for 2 seconds
+    }, 1000); // Show splash for 1 second for better Lighthouse score
     return () => clearTimeout(timer);
   }, []);
 

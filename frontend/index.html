@@ -6,7 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://erapzxkcacxzhbzwifhl.supabase.co">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://erapzxkcacxzhbzwifhl.supabase.co">
+
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" as="style">
+    
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <title>Raj Vaibhav Rai | Senior Android Developer Portfolio</title>
     <meta name="title" content="Raj Vaibhav Rai | Senior Android Developer Portfolio">
     <meta name="description" content="Official portfolio of Raj Vaibhav Rai, a Senior Android Developer with 5+ years of experience. Expert in Kotlin, Jetpack Compose, MVVM, Clean Architecture, and Android app development." />
@@ -16,6 +25,8 @@
     <link rel="canonical" href="https://rajvaibhavrai.site/">
 
     <!-- Apple Touch & Mobile specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="RV Rai Portfolio">
     <meta name="application-name" content="RV Rai Portfolio">
     <meta name="theme-color" content="#0a0a0a">
@@ -39,7 +50,7 @@
     <meta property="twitter:description" content="Senior Android Developer with 5+ years of experience building scalable, high-performance mobile applications using Kotlin, Java, and Jetpack Compose.">
     <meta property="twitter:image" content="https://rajvaibhavrai.site/profile.jpg">
 
-    <!-- JSON-LD Structured Data for Google SEO -->
+    <!-- JSON-LD Structured Data for Global SEO & Brave Search Disambiguation -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -48,29 +59,67 @@
           "@type": "Person",
           "@id": "https://rajvaibhavrai.site/#person",
           "name": "Raj Vaibhav Rai",
-          "jobTitle": "Senior Android Developer",
+          "givenName": "Raj Vaibhav",
+          "familyName": "Rai",
+          "gender": "Male",
+          "jobTitle": "Senior Android Developer & Software Engineer",
           "url": "https://rajvaibhavrai.site/",
           "image": "https://rajvaibhavrai.site/profile.jpg",
+          "description": "Senior Android Developer with 5+ years of experience specializing in Kotlin, Jetpack Compose, and Clean Architecture. Based in Noida, India.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Noida",
+            "addressRegion": "Uttar Pradesh",
+            "addressCountry": "IN"
+          },
+          "alumniOf": {
+            "@type": "CollegeOrUniversity",
+            "name": "ITM School of Management Lucknow"
+          },
           "sameAs": [
             "https://linkedin.com/in/rvrai",
-            "https://github.com/rvrai"
+            "https://github.com/rvrai",
+            "https://twitter.com/rvrai",
+            "https://stackoverflow.com/users/your-id"
+          ],
+          "knowsLanguage": [
+            {
+              "@type": "Language",
+              "name": "English",
+              "alternateName": "en"
+            },
+            {
+              "@type": "Language",
+              "name": "Hindi",
+              "alternateName": "hi"
+            }
           ],
           "knowsAbout": [
             "Android Development", "Kotlin", "Java", "Jetpack Compose", 
             "MVVM", "Clean Architecture", "Coroutines", "Dagger Hilt", 
-            "Room Database", "Retrofit", "Firebase", "Mobile App Architecture"
-          ],
-          "description": "Senior Android Developer with 5+ years of experience building scalable, high-performance mobile applications."
+            "Room Database", "Retrofit", "Firebase", "Mobile App Architecture",
+            "CI/CD for Android", "Unit Testing", "Performance Optimization"
+          ]
         },
         {
           "@type": "WebSite",
           "@id": "https://rajvaibhavrai.site/#website",
           "url": "https://rajvaibhavrai.site/",
-          "name": "Raj Vaibhav Rai | Android Developer",
-          "description": "Professional portfolio showcasing Android development projects, skills, and experience.",
+          "name": "Raj Vaibhav Rai | Senior Android Developer & Architect",
+          "description": "Professional portfolio of Raj Vaibhav Rai, featuring advanced Android projects, Kotlin expertise, and architectural insights.",
           "publisher": {
             "@id": "https://rajvaibhavrai.site/#person"
-          }
+          },
+          "keywords": "Raj Vaibhav Rai, Android Developer, Senior Android Developer, Android Engineer, Kotlin Expert, Jetpack Compose Portfolio, Android Architecture, Mobile Developer Noida"
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://rajvaibhavrai.site/#webpage",
+          "url": "https://rajvaibhavrai.site/",
+          "name": "Raj Vaibhav Rai - Senior Android Developer Portfolio",
+          "isPartOf": { "@id": "https://rajvaibhavrai.site/#website" },
+          "primaryImageOfPage": { "@id": "https://rajvaibhavrai.site/profile.jpg" },
+          "description": "Showcasing the professional journey and technical expertise of Raj Vaibhav Rai in Android ecosystem."
         }
       ]
     }

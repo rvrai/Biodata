@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import PortfolioView from './components/templates/PortfolioView';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
 import LenisProvider from './components/providers/LenisProvider';
 import GlassCursor from './components/atoms/GlassCursor';
 import SplashScreen from './components/atoms/SplashScreen';
 import './App.css';
+
+// Lazy load admin pages
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('adminToken');
@@ -26,22 +28,24 @@ function App() {
       <GlassCursor />
       <SplashScreen />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<PortfolioView />} />
-        <Route 
-          path="/admin/login" 
-          element={isAuthenticated ? <Navigate to="/admin" replace /> : <AdminLogin onLogin={handleLogin} />} 
-        />
-        <Route 
-          path="/admin/*" 
-          element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } 
-        />
-      </Routes>
-    </BrowserRouter>
+        <Suspense fallback={<div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#0a0a0a' }} />}>
+          <Routes>
+            <Route path="/" element={<PortfolioView />} />
+            <Route 
+              path="/admin/login" 
+              element={isAuthenticated ? <Navigate to="/admin" replace /> : <AdminLogin onLogin={handleLogin} />} 
+            />
+            <Route 
+              path="/admin/*" 
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
     </LenisProvider>
   );
 }

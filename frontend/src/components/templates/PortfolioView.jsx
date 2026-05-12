@@ -15,8 +15,7 @@ import '../../App.css';
 const PortfolioView = () => {
   const { data, loading, error } = usePortfolio();
 
-  if (loading) return <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Loading...</div>;
-  if (error) return <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'red' }}>Error loading data: {error}</div>;
+  if (error) return <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'red', background: '#0a0a0a' }}>Error loading data: {error}</div>;
 
   return (
     <>
