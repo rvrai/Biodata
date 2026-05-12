@@ -182,8 +182,103 @@ const ProjectsEditor = () => {
               <input style={inputStyle} value={form.project_url} onChange={e => setForm({ ...form, project_url: e.target.value })} placeholder="https://..." />
             </div>
             <div>
-              <label style={labelStyle}>Icon (Emoji or SVG)</label>
-              <input style={inputStyle} value={form.project_icon} onChange={e => setForm({ ...form, project_icon: e.target.value })} placeholder="📱" />
+              <label style={labelStyle}>Icon (Emoji or Upload)</label>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <div style={{ 
+                  width: '40px', 
+                  height: '40px', 
+                  borderRadius: '8px', 
+                  background: 'rgba(255,255,255,0.05)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  flexShrink: 0,
+                  overflow: 'hidden'
+                }}>
+                  {form.project_icon && (form.project_icon.startsWith('http') || form.project_icon.startsWith('/') || form.project_icon.startsWith('data:')) ? (
+                    <img src={form.project_icon} alt="" style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
+                  ) : (
+                    <span style={{ fontSize: '1.2rem' }}>{form.project_icon || '📱'}</span>
+                  )}
+                </div>
+                <input 
+                  style={{ ...inputStyle, flex: 1 }} 
+                  value={form.project_icon?.startsWith('data:') ? 'Custom Image Uploaded' : form.project_icon} 
+                  onChange={e => {
+                    if (!form.project_icon?.startsWith('data:')) {
+                      setForm({ ...form, project_icon: e.target.value });
+                    }
+                  }} 
+                  placeholder="📱 Emoji or URL" 
+                  readOnly={form.project_icon?.startsWith('data:')}
+                  onClick={() => {
+                    if (form.project_icon?.startsWith('data:')) {
+                      if (confirm('Clear uploaded image?')) setForm({ ...form, project_icon: '' });
+                    }
+                  }}
+                />
+                <input
+                  type="file"
+                  id="icon-upload"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    setMsg('Processing image...');
+                    
+                    try {
+                      // Resize and convert to Base64
+                      const reader = new FileReader();
+                      reader.onload = async (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                          const canvas = document.createElement('canvas');
+                          const MAX_WIDTH = 128;
+                          const MAX_HEIGHT = 128;
+                          let width = img.width;
+                          let height = img.height;
+
+                          if (width > height) {
+                            if (width > MAX_WIDTH) {
+                              height *= MAX_WIDTH / width;
+                              width = MAX_WIDTH;
+                            }
+                          } else {
+                            if (height > MAX_HEIGHT) {
+                              width *= MAX_HEIGHT / height;
+                              height = MAX_HEIGHT;
+                            }
+                          }
+
+                          canvas.width = width;
+                          canvas.height = height;
+                          const ctx = canvas.getContext('2d');
+                          ctx.drawImage(img, 0, 0, width, height);
+                          
+                          const base64 = canvas.toDataURL('image/png', 0.8);
+                          setForm({ ...form, project_icon: base64 });
+                          setMsg('Image processed!');
+                          setTimeout(() => setMsg(''), 3000);
+                        };
+                        img.src = event.target.result;
+                      };
+                      reader.readAsDataURL(file);
+                    } catch (err) {
+                      setMsg('Error: ' + err.message);
+                    }
+                  }}
+                />
+                <button 
+                  type="button"
+                  onClick={() => document.getElementById('icon-upload').click()}
+                  style={{ ...btnStyle, background: 'rgba(255,255,255,0.1)', color: '#fff', whiteSpace: 'nowrap' }}
+                >
+                  Upload
+                </button>
+              </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <div>
@@ -225,7 +320,24 @@ const ProjectsEditor = () => {
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                   <span style={{ fontSize: '1.2rem' }}>{item.project_icon || '📱'}</span>
+                   <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                     {item.project_icon && (item.project_icon.startsWith('http') || item.project_icon.startsWith('/') || item.project_icon.startsWith('data:')) ? (
+                       <>
+                         <img 
+                           src={item.project_icon} 
+                           alt="" 
+                           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                           onError={(e) => { 
+                             e.target.style.display = 'none'; 
+                             if (e.target.nextSibling) e.target.nextSibling.style.display = 'block'; 
+                           }}
+                         />
+                         <span style={{ display: 'none', fontSize: '1.2rem' }}>📱</span>
+                       </>
+                     ) : (
+                       <span style={{ fontSize: '1.2rem' }}>{item.project_icon || '📱'}</span>
+                     )}
+                   </div>
                    <h4 style={{ fontSize: '1rem', margin: 0 }}>{item.project_name}</h4>
                 </div>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>

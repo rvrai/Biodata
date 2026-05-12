@@ -154,11 +154,27 @@ const Projects = () => {
                         fontSize: '1.5rem',
                         border: project.is_featured ? '2px solid var(--accent-primary)' : '1px solid rgba(255,255,255,0.05)',
                         transition: 'transform 0.2s',
+                        overflow: 'hidden'
                       }}
                       onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                       onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                       >
-                               {project.project_icon || '📱'}
+                               {project.project_icon && (project.project_icon.startsWith('http') || project.project_icon.startsWith('/') || project.project_icon.startsWith('data:')) ? (
+                                 <>
+                                   <img 
+                                     src={project.project_icon} 
+                                     alt="" 
+                                     style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px' }}
+                                     onError={(e) => { 
+                                       e.target.style.display = 'none'; 
+                                       if (e.target.nextSibling) e.target.nextSibling.style.display = 'block'; 
+                                     }}
+                                   />
+                                   <span style={{ display: 'none', fontSize: '1.5rem' }}>📱</span>
+                                 </>
+                               ) : (
+                                 <span style={{ fontSize: '1.5rem' }}>{project.project_icon || '📱'}</span>
+                               )}
                       </div>
                       <span style={{ fontSize: '0.75rem', textAlign: 'center', color: '#fff', maxWidth: '90px', lineHeight: '1.2' }}>
                         {project.project_name}
