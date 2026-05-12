@@ -29,7 +29,7 @@ const btnStyle = {
   fontSize: '0.85rem',
 };
 
-const EducationEditor = () => {
+const CertificatesEditor = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
@@ -40,29 +40,26 @@ const EducationEditor = () => {
 
   const fetchItems = async () => {
     const { data, error } = await supabase
-      .from('content_entries')
+      .from('certificates')
       .select('*')
-      .eq('section', 'education')
-      .is('deleted_at', null)
       .order('order', { ascending: true })
-      .order('year', { ascending: false });
+      .order('created_at', { ascending: true });
     if (!error) setItems(data || []);
     setLoading(false);
   };
 
   const startNew = () => {
     setEditing('new');
-    setForm({ degree: '', institution: '', year: '', grade: '', specialization: '' });
+    setForm({ title: '', issuer: '', issue_date: '', image_url: '' });
   };
 
   const startEdit = (item) => {
     setEditing(item.id);
     setForm({
-      degree: item.degree || '',
-      institution: item.institution || '',
-      year: item.year || '',
-      grade: item.grade || '',
-      specialization: item.specialization || '',
+      title: item.title || '',
+      issuer: item.issuer || '',
+      issue_date: item.issue_date || '',
+      image_url: item.image_url || '',
     });
   };
 
@@ -70,17 +67,17 @@ const EducationEditor = () => {
     setMsg('');
     try {
       const payload = {
-        degree: form.degree,
-        institution: form.institution,
-        year: form.year ? parseInt(form.year) : null,
-        grade: form.grade,
-        specialization: form.specialization,
+        title: form.title,
+        issuer: form.issuer,
+        issue_date: form.issue_date || null,
+        image_url: form.image_url,
       };
+
       if (editing === 'new') {
-        const { error } = await supabase.from('content_entries').insert({ section: 'education', ...payload });
+        const { error } = await supabase.from('certificates').insert(payload);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('content_entries').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editing);
+        const { error } = await supabase.from('certificates').update(payload).eq('id', editing);
         if (error) throw error;
       }
       setEditing(null);
@@ -93,10 +90,8 @@ const EducationEditor = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this education entry?')) return;
-    const { error } = await supabase.from('content_entries')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', id);
+    if (!confirm('Delete this certificate?')) return;
+    const { error } = await supabase.from('certificates').delete().eq('id', id);
     if (!error) fetchItems();
   };
 
@@ -106,15 +101,14 @@ const EducationEditor = () => {
     const temp = newItems[index];
     newItems[index] = newItems[index - 1];
     newItems[index - 1] = temp;
-    
     setItems(newItems);
     
     const updates = newItems.map((item, idx) => ({
       id: item.id,
-      section: 'education',
+      title: item.title, // Include title for upsert safety
       order: idx + 1,
     }));
-    await supabase.from('content_entries').upsert(updates);
+    await supabase.from('certificates').upsert(updates);
     fetchItems();
   };
 
@@ -124,15 +118,14 @@ const EducationEditor = () => {
     const temp = newItems[index];
     newItems[index] = newItems[index + 1];
     newItems[index + 1] = temp;
-    
     setItems(newItems);
     
     const updates = newItems.map((item, idx) => ({
       id: item.id,
-      section: 'education',
+      title: item.title,
       order: idx + 1,
     }));
-    await supabase.from('content_entries').upsert(updates);
+    await supabase.from('certificates').upsert(updates);
     fetchItems();
   };
 
@@ -142,11 +135,11 @@ const EducationEditor = () => {
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
-          <h2 style={{ marginBottom: '0.3rem' }}>Education</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{items.length} entries</p>
+          <h2 style={{ marginBottom: '0.3rem' }}>Certificates</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{items.length} certificates</p>
         </div>
         <button onClick={startNew} style={{ ...btnStyle, background: 'var(--accent-primary)', color: '#000' }}>
-          + Add Education
+          + Add Certificate
         </button>
       </div>
 
@@ -154,27 +147,23 @@ const EducationEditor = () => {
 
       {editing && (
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
-          <h3 style={{ marginBottom: '15px', color: 'var(--accent-primary)' }}>{editing === 'new' ? 'New Entry' : 'Edit Entry'}</h3>
+          <h3 style={{ marginBottom: '15px', color: 'var(--accent-primary)' }}>{editing === 'new' ? 'New Certificate' : 'Edit Certificate'}</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-            <div>
-              <label style={labelStyle}>Degree</label>
-              <input style={inputStyle} value={form.degree} onChange={e => setForm({ ...form, degree: e.target.value })} placeholder="e.g. B.Tech/B.E." />
+            <div style={{ gridColumn: 'span 2' }}>
+              <label style={labelStyle}>Certificate Title</label>
+              <input style={inputStyle} value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
             </div>
             <div>
-              <label style={labelStyle}>Specialization</label>
-              <input style={inputStyle} value={form.specialization} onChange={e => setForm({ ...form, specialization: e.target.value })} placeholder="e.g. Computer Science" />
+              <label style={labelStyle}>Issuer</label>
+              <input style={inputStyle} value={form.issuer} onChange={e => setForm({ ...form, issuer: e.target.value })} />
+            </div>
+            <div>
+              <label style={labelStyle}>Issue Date</label>
+              <input type="date" style={inputStyle} value={form.issue_date} onChange={e => setForm({ ...form, issue_date: e.target.value })} />
             </div>
             <div style={{ gridColumn: 'span 2' }}>
-              <label style={labelStyle}>Institution</label>
-              <input style={inputStyle} value={form.institution} onChange={e => setForm({ ...form, institution: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Year</label>
-              <input style={inputStyle} type="number" value={form.year} onChange={e => setForm({ ...form, year: e.target.value })} />
-            </div>
-            <div>
-              <label style={labelStyle}>Grade</label>
-              <input style={inputStyle} value={form.grade} onChange={e => setForm({ ...form, grade: e.target.value })} placeholder="e.g. 7.4/10" />
+              <label style={labelStyle}>Image URL</label>
+              <input style={inputStyle} value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
             </div>
           </div>
           <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
@@ -196,10 +185,12 @@ const EducationEditor = () => {
                 <button onClick={() => handleMoveUp(idx)} disabled={idx === 0} style={{ background: 'none', border: 'none', cursor: 'pointer', color: idx === 0 ? 'rgba(255,255,255,0.2)' : '#fff', fontSize: '1rem' }}>▲</button>
                 <button onClick={() => handleMoveDown(idx)} disabled={idx === items.length - 1} style={{ background: 'none', border: 'none', cursor: 'pointer', color: idx === items.length - 1 ? 'rgba(255,255,255,0.2)' : '#fff', fontSize: '1rem' }}>▼</button>
               </div>
-              <div>
-                <h4 style={{ fontSize: '1rem' }}>{item.degree} <span style={{color: 'var(--text-secondary)', fontWeight: 'normal', fontSize: '0.85rem'}}>{item.specialization ? `in ${item.specialization}` : ''}</span></h4>
-                <span style={{ fontSize: '0.85rem', color: 'var(--accent-primary)' }}>{item.institution}</span>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginLeft: '12px' }}>{item.year} • {item.grade}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                {item.image_url && <img src={item.image_url} alt="" style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover', background: 'rgba(255,255,255,0.1)' }} />}
+                <div>
+                  <h4 style={{ fontSize: '1rem', margin: 0 }}>{item.title}</h4>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '2px 0 0 0' }}>{item.issuer} • {item.issue_date}</p>
+                </div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -213,4 +204,4 @@ const EducationEditor = () => {
   );
 };
 
-export default EducationEditor;
+export default CertificatesEditor;

@@ -52,7 +52,15 @@ const ProjectsEditor = () => {
 
   const startNew = () => {
     setEditing('new');
-    setForm({ project_name: '', project_description: '', project_url: '', project_tags: '' });
+    setForm({ 
+      project_name: '', 
+      project_description: '', 
+      project_url: '', 
+      project_tags: '',
+      project_icon: '📱',
+      team_size: 1,
+      role: 'Lead Developer'
+    });
   };
 
   const startEdit = (item) => {
@@ -62,6 +70,9 @@ const ProjectsEditor = () => {
       project_description: item.project_description || '',
       project_url: item.project_url || '',
       project_tags: (item.project_tags || []).join(', '),
+      project_icon: item.project_icon || '📱',
+      team_size: item.team_size || 1,
+      role: item.role || 'Developer'
     });
   };
 
@@ -69,23 +80,23 @@ const ProjectsEditor = () => {
     setMsg('');
     const tags = form.project_tags.split(',').map(t => t.trim()).filter(Boolean);
     try {
+      const payload = {
+        section: 'project',
+        project_name: form.project_name,
+        project_description: form.project_description,
+        project_url: form.project_url || null,
+        project_tags: tags,
+        project_icon: form.project_icon,
+        team_size: parseInt(form.team_size) || 1,
+        role: form.role,
+        updated_at: new Date().toISOString(),
+      };
+
       if (editing === 'new') {
-        const { error } = await supabase.from('content_entries').insert({
-          section: 'project',
-          project_name: form.project_name,
-          project_description: form.project_description,
-          project_url: form.project_url || null,
-          project_tags: tags,
-        });
+        const { error } = await supabase.from('content_entries').insert(payload);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('content_entries').update({
-          project_name: form.project_name,
-          project_description: form.project_description,
-          project_url: form.project_url || null,
-          project_tags: tags,
-          updated_at: new Date().toISOString(),
-        }).eq('id', editing);
+        const { error } = await supabase.from('content_entries').update(payload).eq('id', editing);
         if (error) throw error;
       }
       setEditing(null);
@@ -114,12 +125,12 @@ const ProjectsEditor = () => {
     newItems[index] = newItems[index - 1];
     newItems[index - 1] = temp;
     
-    // Update local state immediately for snappy UI
     setItems(newItems);
     
-    // Send updates to DB
+    // Fix: Upsert requires all non-nullable columns, so we include 'section'
     const updates = newItems.map((item, idx) => ({
       id: item.id,
+      section: 'project', 
       order: idx + 1,
     }));
     await supabase.from('content_entries').upsert(updates);
@@ -137,6 +148,7 @@ const ProjectsEditor = () => {
     
     const updates = newItems.map((item, idx) => ({
       id: item.id,
+      section: 'project',
       order: idx + 1,
     }));
     await supabase.from('content_entries').upsert(updates);
@@ -169,6 +181,20 @@ const ProjectsEditor = () => {
               <label style={labelStyle}>URL (Play Store / GitHub)</label>
               <input style={inputStyle} value={form.project_url} onChange={e => setForm({ ...form, project_url: e.target.value })} placeholder="https://..." />
             </div>
+            <div>
+              <label style={labelStyle}>Icon (Emoji or SVG)</label>
+              <input style={inputStyle} value={form.project_icon} onChange={e => setForm({ ...form, project_icon: e.target.value })} placeholder="📱" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div>
+                <label style={labelStyle}>Team Size</label>
+                <input type="number" style={inputStyle} value={form.team_size} onChange={e => setForm({ ...form, team_size: e.target.value })} />
+              </div>
+              <div>
+                <label style={labelStyle}>My Role</label>
+                <input style={inputStyle} value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} placeholder="Lead Android" />
+              </div>
+            </div>
             <div style={{ gridColumn: 'span 2' }}>
               <label style={labelStyle}>Description</label>
               <textarea style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} value={form.project_description} onChange={e => setForm({ ...form, project_description: e.target.value })} />
@@ -198,10 +224,18 @@ const ProjectsEditor = () => {
                 <button onClick={() => handleMoveDown(idx)} disabled={idx === items.length - 1} style={{ background: 'none', border: 'none', cursor: 'pointer', color: idx === items.length - 1 ? 'rgba(255,255,255,0.2)' : '#fff', fontSize: '1rem' }}>▼</button>
               </div>
               <div>
-                <h4 style={{ fontSize: '1rem' }}>{item.project_name}</h4>
-                <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                   <span style={{ fontSize: '1.2rem' }}>{item.project_icon || '📱'}</span>
+                   <h4 style={{ fontSize: '1rem', margin: 0 }}>{item.project_name}</h4>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Role: <span style={{color: 'var(--accent-primary)'}}>{item.role || 'N/A'}</span></span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>·</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Team: <span style={{color: '#fff'}}>{item.team_size || 1}</span></span>
+                </div>
+                <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
                   {(item.project_tags || []).map((tag, i) => (
-                    <span key={i} style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(0,255,255,0.1)', color: 'var(--accent-primary)' }}>{tag}</span>
+                    <span key={i} style={{ fontSize: '0.65rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(0,255,255,0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(0,217,255,0.1)' }}>{tag}</span>
                   ))}
                 </div>
               </div>

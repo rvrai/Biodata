@@ -8,6 +8,7 @@ import About from '../organisms/About';
 import Experience from '../organisms/Experience';
 import Skills from '../organisms/Skills';
 import Education from '../organisms/Education';
+import Certificates from '../organisms/Certificates';
 import Contact from '../organisms/Contact';
 import Footer from '../organisms/Footer';
 import '../../App.css';
@@ -40,6 +41,8 @@ const PortfolioView = () => {
               return <Skills key={section.id} skills={data.skills} />;
             case 'education':
               return <Education key={section.id} education={data.education} />;
+            case 'certificates':
+              return <Certificates key={section.id} certificates={data.certificates} />;
             case 'contact':
               return <Contact key={section.id} socialLinks={data.social_links} />;
             case 'footer':

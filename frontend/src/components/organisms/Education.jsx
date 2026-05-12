@@ -21,7 +21,7 @@ const Education = ({ education }) => {
             style={{ padding: '2rem', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}
           >
             <div>
-              <h3 style={{ fontSize: '1.3rem', color: '#fff', marginBottom: '0.5rem' }}>{edu.degree} {edu.field && `in ${edu.field}`}</h3>
+              <h3 style={{ fontSize: '1.3rem', color: '#fff', marginBottom: '0.5rem' }}>{edu.degree} {edu.specialization && `in ${edu.specialization}`}</h3>
               <div style={{ color: 'var(--text-secondary)' }}>{edu.institution}</div>
               {edu.grade && <div style={{ marginTop: '0.5rem', color: 'var(--accent-primary)', fontSize: '0.9rem' }}>Grade: {edu.grade}</div>}
             </div>

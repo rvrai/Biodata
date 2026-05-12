@@ -139,15 +139,17 @@ export const PortfolioProvider = ({ children }) => {
         let sections = null;
         let skillsData = null;
         let socialData = null;
+        let certificatesData = null;
 
         try {
           const { supabase } = await import('../lib/supabase.js');
           
-          const [entriesResult, sectionsResult, skillsResult, socialResult] = await Promise.all([
+          const [entriesResult, sectionsResult, skillsResult, socialResult, certsResult] = await Promise.all([
             supabase.from('content_entries').select('*').is('deleted_at', null).order('order', { ascending: true }).order('id', { ascending: true }),
             supabase.from('sections').select('*').order('order', { ascending: true }),
             supabase.from('skills').select('*').eq('is_visible', true).order('order', { ascending: true }),
             supabase.from('social_links').select('*').eq('is_visible', true).order('order', { ascending: true }),
+            supabase.from('certificates').select('*').order('order', { ascending: true }),
           ]);
           
           if (entriesResult.error) throw entriesResult.error;
@@ -157,6 +159,7 @@ export const PortfolioProvider = ({ children }) => {
           sections = sectionsResult.data;
           skillsData = skillsResult.data || [];
           socialData = socialResult.data || [];
+          certificatesData = certsResult.data || [];
         } catch (dbError) {
           console.warn('Supabase fetch failed, falling back to cache file:', dbError);
           try {
@@ -198,16 +201,20 @@ export const PortfolioProvider = ({ children }) => {
 
           const projects = entries.filter(e => e.section === 'project').map((e, index) => ({
             id: e.id || index,
-            name: e.project_name,
-            description: e.project_description,
-            tech_stack: e.project_tags || [],
+            project_name: e.project_name,
+            project_description: e.project_description,
+            project_tags: e.project_tags || [],
+            project_icon: e.project_icon,
+            team_size: e.team_size,
+            role: e.role,
             is_featured: true,
-            playstore_url: e.project_url || '#'
+            project_url: e.project_url || '#'
           }));
 
           const education = entries.filter(e => e.section === 'education').map((e, index) => ({
             id: e.id || index,
             degree: e.degree,
+            specialization: e.specialization,
             institution: e.institution,
             year: e.year,
             grade: e.grade
@@ -221,6 +228,7 @@ export const PortfolioProvider = ({ children }) => {
             projects: projects.length > 0 ? projects : LOCAL_DATA.projects,
             education: education.length > 0 ? education : LOCAL_DATA.education,
             skills: skillsData && skillsData.length > 0 ? skillsData : LOCAL_DATA.skills,
+            certificates: certificatesData || [],
             social_links: socialData && socialData.length > 0 ? socialData.map(s => ({
               id: s.id, platform: s.platform, label: s.label, url: s.url
             })) : LOCAL_DATA.social_links,

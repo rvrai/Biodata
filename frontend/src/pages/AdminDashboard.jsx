@@ -5,6 +5,7 @@ import ProjectsEditor from '../components/admin/ProjectsEditor';
 import ExperienceEditor from '../components/admin/ExperienceEditor';
 import SkillsEditor from '../components/admin/SkillsEditor';
 import EducationEditor from '../components/admin/EducationEditor';
+import CertificatesEditor from '../components/admin/CertificatesEditor';
 import MessagesEditor from '../components/admin/MessagesEditor';
 import SocialLinksEditor from '../components/admin/SocialLinksEditor';
 import HeroEditor from '../components/admin/HeroEditor';
@@ -48,6 +49,8 @@ const AdminDashboard = () => {
 
   const updateOrders = async (newSections) => {
     try {
+      // Fix: upserting in Postgres requires the full row if not handled carefully,
+      // but here we specify the conflict target (id).
       const updates = newSections.map((s, idx) => ({
         id: s.id,
         name: s.name,
@@ -55,7 +58,7 @@ const AdminDashboard = () => {
         is_visible: s.is_visible,
         order: idx + 1
       }));
-      const { error } = await supabase.from('sections').upsert(updates);
+      const { error } = await supabase.from('sections').upsert(updates, { onConflict: 'id' });
       if (error) throw error;
     } catch (err) {
       console.error(err);
@@ -71,7 +74,7 @@ const AdminDashboard = () => {
     newSections[index - 1] = temp;
     
     setSections(newSections);
-    updateOrders(newSections);
+    await updateOrders(newSections);
   };
 
   const handleMoveDown = async (index) => {
@@ -82,7 +85,7 @@ const AdminDashboard = () => {
     newSections[index + 1] = temp;
     
     setSections(newSections);
-    updateOrders(newSections);
+    await updateOrders(newSections);
   };
 
   const [activeTab, setActiveTab] = useState('Rearrange Sections');
@@ -106,7 +109,7 @@ const AdminDashboard = () => {
         <div className="glass" style={{ padding: '1.5rem', borderRadius: '15px', height: 'fit-content' }}>
           <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Management</h3>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {['Rearrange Sections', 'Hero Section', 'Profile Info', 'Projects', 'Experience', 'Skills', 'Education', 'Messages', 'Site Settings'].map(item => (
+            {['Rearrange Sections', 'Hero Section', 'Profile Info', 'Projects', 'Experience', 'Skills', 'Education', 'Certificates', 'Messages', 'Site Settings'].map(item => (
               <li key={item}>
                 <button 
                   onClick={() => setActiveTab(item)}
@@ -135,7 +138,7 @@ const AdminDashboard = () => {
             <>
               <h2 style={{ marginBottom: '1rem' }}>DOM Configuration</h2>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-                Drag and drop or use arrows to dynamically reorder sections on the live website. Toggle visibility to hide/show sections.
+                Reorder sections on the live website. Toggle visibility to hide/show sections.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -191,6 +194,7 @@ const AdminDashboard = () => {
           {activeTab === 'Experience' && <ExperienceEditor />}
           {activeTab === 'Skills' && <SkillsEditor />}
           {activeTab === 'Education' && <EducationEditor />}
+          {activeTab === 'Certificates' && <CertificatesEditor />}
           {activeTab === 'Messages' && <MessagesEditor />}
           {activeTab === 'Site Settings' && <SocialLinksEditor />}
         </div>

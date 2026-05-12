@@ -158,10 +158,10 @@ const Projects = () => {
                       onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                       onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                       >
-                        📱
+                               {project.project_icon || '📱'}
                       </div>
                       <span style={{ fontSize: '0.75rem', textAlign: 'center', color: '#fff', maxWidth: '90px', lineHeight: '1.2' }}>
-                        {project.name}
+                        {project.project_name}
                       </span>
                     </div>
                   ))}
@@ -183,7 +183,7 @@ const Projects = () => {
                   style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', cursor: 'pointer', color: '#fff' }}
                 >
                   <span style={{ fontSize: '1.5rem' }}>←</span>
-                  <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{selectedProject.name}</span>
+                  <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{selectedProject.project_name}</span>
                 </div>
 
                 <div style={{
@@ -192,14 +192,26 @@ const Projects = () => {
                   padding: '20px',
                   marginBottom: '20px'
                 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '15px' }}>
+                    <div style={{ textAlign: 'center', flex: 1 }}>
+                       <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>My Role</div>
+                       <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.9rem' }}>{selectedProject.role || 'Developer'}</div>
+                    </div>
+                    <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)' }} />
+                    <div style={{ textAlign: 'center', flex: 1 }}>
+                       <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Team Size</div>
+                       <div style={{ color: '#fff', fontWeight: 'bold', fontSize: '0.9rem' }}>{selectedProject.team_size || 1} Person(s)</div>
+                    </div>
+                  </div>
+
                   <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
-                    {selectedProject.description}
+                    {selectedProject.project_description}
                   </p>
                   
                   <div style={{ marginBottom: '20px' }}>
                     <h4 style={{ color: '#fff', marginBottom: '10px' }}>Tech Stack</h4>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                      {selectedProject.tech_stack?.map(tech => (
+                      {selectedProject.project_tags?.map(tech => (
                         <span key={tech} style={{ 
                           padding: '5px 12px', 
                           background: 'rgba(0, 217, 255, 0.1)', 
@@ -215,7 +227,7 @@ const Projects = () => {
                   </div>
 
                   <a 
-                    href={selectedProject.live_url || selectedProject.playstore_url || selectedProject.github_url || '#'}
+                    href={selectedProject.project_url || '#'}
                     target="_blank"
                     rel="noreferrer"
                     style={{
