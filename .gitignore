@@ -62,5 +62,4 @@ npm-debug.log*
 # Hidden files
 AGENTS.md
 CLAUDE.md
-README.md
 netlify.toml
