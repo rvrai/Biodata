@@ -85,7 +85,7 @@ const AdminDashboard = () => {
     updateOrders(newSections);
   };
 
-  const [activeTab, setActiveTab] = useState('Sections (DOM Control)');
+  const [activeTab, setActiveTab] = useState('Rearrange Sections');
 
   if (loading) return <div style={{ color: '#fff', padding: '2rem' }}>Loading Dashboard...</div>;
 
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
         <div className="glass" style={{ padding: '1.5rem', borderRadius: '15px', height: 'fit-content' }}>
           <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Management</h3>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {['Sections (DOM Control)', 'Hero Section', 'Profile Info', 'Projects', 'Experience', 'Skills', 'Education', 'Messages', 'Site Settings'].map(item => (
+            {['Rearrange Sections', 'Hero Section', 'Profile Info', 'Projects', 'Experience', 'Skills', 'Education', 'Messages', 'Site Settings'].map(item => (
               <li key={item}>
                 <button 
                   onClick={() => setActiveTab(item)}
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
 
         {/* Main Content Area */}
         <div className="glass" style={{ padding: '2rem', borderRadius: '15px' }}>
-          {activeTab === 'Sections (DOM Control)' && (
+          {activeTab === 'Rearrange Sections' && (
             <>
               <h2 style={{ marginBottom: '1rem' }}>DOM Configuration</h2>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>

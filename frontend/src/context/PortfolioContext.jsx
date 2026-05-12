@@ -144,7 +144,7 @@ export const PortfolioProvider = ({ children }) => {
           const { supabase } = await import('../lib/supabase.js');
           
           const [entriesResult, sectionsResult, skillsResult, socialResult] = await Promise.all([
-            supabase.from('content_entries').select('*').is('deleted_at', null).order('id', { ascending: true }),
+            supabase.from('content_entries').select('*').is('deleted_at', null).order('order', { ascending: true }).order('id', { ascending: true }),
             supabase.from('sections').select('*').order('order', { ascending: true }),
             supabase.from('skills').select('*').eq('is_visible', true).order('order', { ascending: true }),
             supabase.from('social_links').select('*').eq('is_visible', true).order('order', { ascending: true }),

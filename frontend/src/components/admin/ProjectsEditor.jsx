@@ -44,6 +44,7 @@ const ProjectsEditor = () => {
       .select('*')
       .eq('section', 'project')
       .is('deleted_at', null)
+      .order('order', { ascending: true })
       .order('created_at', { ascending: true });
     if (!error) setItems(data || []);
     setLoading(false);
@@ -106,6 +107,42 @@ const ProjectsEditor = () => {
 
   if (loading) return <div style={{ color: 'var(--text-secondary)', padding: '2rem' }}>Loading...</div>;
 
+  const handleMoveUp = async (index) => {
+    if (index === 0) return;
+    const newItems = [...items];
+    const temp = newItems[index];
+    newItems[index] = newItems[index - 1];
+    newItems[index - 1] = temp;
+    
+    // Update local state immediately for snappy UI
+    setItems(newItems);
+    
+    // Send updates to DB
+    const updates = newItems.map((item, idx) => ({
+      id: item.id,
+      order: idx + 1,
+    }));
+    await supabase.from('content_entries').upsert(updates);
+    fetchItems();
+  };
+
+  const handleMoveDown = async (index) => {
+    if (index === items.length - 1) return;
+    const newItems = [...items];
+    const temp = newItems[index];
+    newItems[index] = newItems[index + 1];
+    newItems[index + 1] = temp;
+    
+    setItems(newItems);
+    
+    const updates = newItems.map((item, idx) => ({
+      id: item.id,
+      order: idx + 1,
+    }));
+    await supabase.from('content_entries').upsert(updates);
+    fetchItems();
+  };
+
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -149,18 +186,24 @@ const ProjectsEditor = () => {
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {items.map(item => (
+        {items.map((item, idx) => (
           <div key={item.id} style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             padding: '15px 20px', background: 'rgba(255,255,255,0.04)', borderRadius: '10px',
             border: '1px solid rgba(255,255,255,0.08)',
           }}>
-            <div>
-              <h4 style={{ fontSize: '1rem' }}>{item.project_name}</h4>
-              <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
-                {(item.project_tags || []).map((tag, i) => (
-                  <span key={i} style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(0,255,255,0.1)', color: 'var(--accent-primary)' }}>{tag}</span>
-                ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <button onClick={() => handleMoveUp(idx)} disabled={idx === 0} style={{ background: 'none', border: 'none', cursor: 'pointer', color: idx === 0 ? 'rgba(255,255,255,0.2)' : '#fff', fontSize: '1rem' }}>▲</button>
+                <button onClick={() => handleMoveDown(idx)} disabled={idx === items.length - 1} style={{ background: 'none', border: 'none', cursor: 'pointer', color: idx === items.length - 1 ? 'rgba(255,255,255,0.2)' : '#fff', fontSize: '1rem' }}>▼</button>
+              </div>
+              <div>
+                <h4 style={{ fontSize: '1rem' }}>{item.project_name}</h4>
+                <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
+                  {(item.project_tags || []).map((tag, i) => (
+                    <span key={i} style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(0,255,255,0.1)', color: 'var(--accent-primary)' }}>{tag}</span>
+                  ))}
+                </div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
