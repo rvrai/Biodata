@@ -97,7 +97,12 @@ const AdminDashboard = () => {
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
         <h1 style={{ color: 'var(--accent-primary)' }}>Control Panel</h1>
         <button 
-          onClick={async () => { await supabase.auth.signOut(); localStorage.removeItem('adminToken'); window.location.reload(); }}
+          onClick={async () => {
+            // signOut triggers onAuthStateChange in App.jsx which:
+            // 1. Sets isAuthenticated=false → redirects to /admin/login
+            // 2. Clears adminToken from localStorage automatically
+            await supabase.auth.signOut();
+          }}
           style={{ padding: '10px 20px', borderRadius: '8px', background: 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}
         >
           Logout

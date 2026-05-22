@@ -115,6 +115,7 @@ const ExperienceEditor = () => {
     
     const updates = newItems.map((item, idx) => ({
       id: item.id,
+      section: 'experience', // Fix: required for upsert on content_entries (NOT NULL)
       order: idx + 1,
     }));
     await supabase.from('content_entries').upsert(updates);
@@ -132,6 +133,7 @@ const ExperienceEditor = () => {
     
     const updates = newItems.map((item, idx) => ({
       id: item.id,
+      section: 'experience', // Fix: required for upsert on content_entries (NOT NULL)
       order: idx + 1,
     }));
     await supabase.from('content_entries').upsert(updates);
