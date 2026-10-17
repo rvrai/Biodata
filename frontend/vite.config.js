@@ -40,7 +40,16 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        // Never precache the server-side data fallback or heavy binary assets
+        globIgnores: ['**/cache/data.json', '**/cache/data.md', '**/Raj_Vaibhav_Rai_Android.pdf'],
+        navigateFallback: '/index.html',
         runtimeCaching: [
+          {
+            // The /cache/data.json fallback must always come fresh from the server
+            // and must NEVER be saved in the browser cache (per project requirement).
+            urlPattern: /\/cache\/data\.json$/i,
+            handler: 'NetworkOnly',
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',

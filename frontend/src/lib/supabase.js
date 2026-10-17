@@ -559,6 +559,22 @@ class MockSupabaseAuth {
   }
 }
 
+const SEED_ABOUT_CONFIG = [{
+  id: 1,
+  location: 'Noida, INDIA',
+  tagline: 'Who I Am',
+  bio: '',
+  years_exp: '5+',
+  apps_shipped: '8+',
+  downloads: '1M+',
+  pillars: [
+    { title: 'Growth', desc: 'Constant learning and exploring new paradigms.' },
+    { title: 'Focus', desc: 'Deep work on efficiency and precision in every layer built.' },
+    { title: 'Craft', desc: 'Discipline and dedication in every single line of code.' }
+  ],
+  updated_at: '2026-05-02T10:23:08.376732+00:00'
+}];
+
 class MockSupabaseClient {
   constructor() {
     this.auth = new MockSupabaseAuth(this);
@@ -576,6 +592,7 @@ class MockSupabaseClient {
       localStorage.setItem('mock_tbl_hero_bubbles', JSON.stringify(SEED_HERO_BUBBLES));
       localStorage.setItem('mock_tbl_content_entries', JSON.stringify(SEED_CONTENT_ENTRIES));
       localStorage.setItem('mock_tbl_certificates', JSON.stringify([]));
+      localStorage.setItem('mock_tbl_about_config', JSON.stringify(SEED_ABOUT_CONFIG));
       localStorage.setItem('mock_supabase_seeded', 'true');
     }
   }

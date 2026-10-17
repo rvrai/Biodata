@@ -1,13 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { groupBy } from '../../utils/format';
 
 const Skills = ({ skills }) => {
-  // Group skills by category
-  const groupedSkills = skills?.reduce((acc, skill) => {
-    if (!acc[skill.category]) acc[skill.category] = [];
-    acc[skill.category].push(skill);
-    return acc;
-  }, {});
+  // Group skills by category (calculation helper)
+  const groupedSkills = groupBy(skills, (skill) => skill.category);
 
   return (
     <section id="skills" className="section-padding container">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
-import ParticleBackground from '../atoms/ParticleBackground';
+import GalaxyBackground from '../atoms/GalaxyBackground';
 import Navbar from '../organisms/Navbar';
 import Hero from '../organisms/Hero';
 import Projects from '../organisms/Projects';
@@ -11,20 +11,25 @@ import Education from '../organisms/Education';
 import Certificates from '../organisms/Certificates';
 import Contact from '../organisms/Contact';
 import Footer from '../organisms/Footer';
+import useSectionMeta from '../../hooks/useSectionMeta';
 import '../../App.css';
 
 const PortfolioView = () => {
   const { data, loading, error } = usePortfolio();
+  const sectionIds = (data?.sections || [])
+    .filter((s) => s.is_visible && s.section_type !== 'footer')
+    .map((s) => s.section_type);
+  const activeSection = useSectionMeta(sectionIds);
 
   if (error) return <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'red', background: '#0a0a0a' }}>Error loading data: {error}</div>;
 
   return (
     <>
-      {data?.site_config?.enable_particles && <ParticleBackground />}
+      {data?.site_config?.enable_particles && <GalaxyBackground variant={activeSection} />}
       
       {data?.sections && <Navbar profile={data.profile} sections={data.sections} />}
       
-      <main>
+      <main id="main">
         {data?.sections?.map(section => {
           if (!section.is_visible) return null;
           

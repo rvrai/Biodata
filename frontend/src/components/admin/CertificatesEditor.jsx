@@ -186,7 +186,7 @@ const CertificatesEditor = () => {
                 <button onClick={() => handleMoveDown(idx)} disabled={idx === items.length - 1} style={{ background: 'none', border: 'none', cursor: 'pointer', color: idx === items.length - 1 ? 'rgba(255,255,255,0.2)' : '#fff', fontSize: '1rem' }}>▼</button>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                {item.image_url && <img src={item.image_url} alt="" style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover', background: 'rgba(255,255,255,0.1)' }} />}
+                {item.image_url && <img src={item.image_url} alt={item.title} style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover', background: 'rgba(255,255,255,0.1)' }} />}
                 <div>
                   <h4 style={{ fontSize: '1rem', margin: 0 }}>{item.title}</h4>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '2px 0 0 0' }}>{item.issuer} • {item.issue_date}</p>

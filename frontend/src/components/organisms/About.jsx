@@ -1,27 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { usePortfolio } from '../../context/PortfolioContext';
+import useAbout from '../../hooks/useAbout';
+import CountUp from '../atoms/CountUp';
+import Reveal from '../atoms/Reveal';
 
 const About = () => {
   const { data } = usePortfolio();
   const profile = data?.profile;
-  const experience = data?.experience || [];
-  const projects = data?.projects || [];
+  const about = useAbout();
 
-  const expYears = experience.length > 0 ? "5+" : "0";
-  const projCount = projects.length > 0 ? `${projects.length}+` : "0";
-
-  const pillars = [
-    { title: "Growth", desc: "Constant learning and exploring new paradigms." },
-    { title: "Focus", desc: "Deep work on efficiency and precision in every layer built." },
-    { title: "Craft", desc: "Discipline and dedication in every single line of code." }
-  ];
+  const pillars = about.pillars || [];
+  const yearsExp = about.years_exp;
+  const appsShipped = about.apps_shipped;
+  const downloads = about.downloads;
+  const location = about.location || profile?.location || 'India';
 
   return (
     <section id="about" className="section-padding container">
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.35em', marginBottom: '0.5rem' }}>
-          Who I Am
+          {about.tagline || 'Who I Am'}
         </p>
         <h2 style={{ fontFamily: 'Comfortaa, cursive', fontWeight: '700', color: '#fff', fontSize: 'clamp(2rem, 5vw, 3rem)', margin: 0 }}>
           About Me
@@ -58,7 +57,7 @@ const About = () => {
             }}
           >
             <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🇮🇳</div>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{profile?.location || "India"}</h3>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{location}</h3>
             <p style={{ fontFamily: 'JetBrains Mono', color: 'var(--accent-saffron)', fontSize: '0.9rem' }}>
               25.59°N 85.14°E · GMT+5:30
             </p>
@@ -86,19 +85,19 @@ const About = () => {
             <div style={{ display: 'flex', gap: '2rem', width: '100%', justifyContent: 'center' }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '3rem', fontWeight: 'bold', background: 'linear-gradient(to right, #00C6FF, #0072FF)', WebkitBackgroundClip: 'text', color: 'transparent' }}>
-                  {expYears}
+                  <CountUp value={yearsExp} />
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '5px' }}>Years Exp</div>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '3rem', fontWeight: 'bold', background: 'linear-gradient(to right, #FF6A00, #EE0979)', WebkitBackgroundClip: 'text', color: 'transparent' }}>
-                  {projCount}
+                  <CountUp value={appsShipped} />
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '5px' }}>Apps Shipped</div>
               </div>
             </div>
             <div style={{ marginTop: '25px', fontSize: '0.95rem', color: 'var(--accent-saffron)', fontFamily: 'JetBrains Mono', textAlign: 'center', background: 'rgba(255,106,0,0.1)', padding: '8px 15px', borderRadius: '20px' }}>
-              🚀 1M+ Downloads Impact
+              🚀 {downloads} Downloads Impact
             </div>
           </motion.div>
         </div>
@@ -134,12 +133,10 @@ const About = () => {
         margin: '2rem auto 0 auto'
       }}>
         {pillars.map((pillar, idx) => (
-          <motion.div
+          <Reveal
             key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 + (idx * 0.1) }}
+            delay={0.2 + (idx * 0.1)}
+            whileHover={{ scale: 1.03, y: -4 }}
             className="glass hover-lift"
             style={{
               padding: '2rem',
@@ -153,7 +150,7 @@ const About = () => {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>
               {pillar.desc}
             </p>
-          </motion.div>
+          </Reveal>
         ))}
       </div>
     </section>

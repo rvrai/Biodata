@@ -163,7 +163,7 @@ const Projects = () => {
                                  <>
                                    <img 
                                      src={project.project_icon} 
-                                     alt="" 
+                                     alt={project.project_name || 'Project icon'} 
                                      style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px' }}
                                      onError={(e) => { 
                                        e.target.style.display = 'none'; 
@@ -387,9 +387,19 @@ const Projects = () => {
           {dockTabs.map((tab) => (
             <div 
               key={tab.id} 
+              role="button"
+              tabIndex={0}
+              aria-label={`${tab.id} tab`}
               onClick={() => {
                 setActiveTab(tab.id);
                 if (tab.id === 'home') setSelectedProject(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setActiveTab(tab.id);
+                  if (tab.id === 'home') setSelectedProject(null);
+                }
               }}
               style={{ 
                 width: '45px', 

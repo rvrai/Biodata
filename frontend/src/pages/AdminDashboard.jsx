@@ -9,6 +9,7 @@ import CertificatesEditor from '../components/admin/CertificatesEditor';
 import MessagesEditor from '../components/admin/MessagesEditor';
 import SocialLinksEditor from '../components/admin/SocialLinksEditor';
 import HeroEditor from '../components/admin/HeroEditor';
+import AboutEditor from '../components/admin/AboutEditor';
 
 const AdminDashboard = () => {
   const [sections, setSections] = useState([]);
@@ -114,7 +115,7 @@ const AdminDashboard = () => {
         <div className="glass" style={{ padding: '1.5rem', borderRadius: '15px', height: 'fit-content' }}>
           <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Management</h3>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {['Rearrange Sections', 'Hero Section', 'Profile Info', 'Projects', 'Experience', 'Skills', 'Education', 'Certificates', 'Messages', 'Site Settings'].map(item => (
+            {['Rearrange Sections', 'Hero Section', 'Profile Info', 'About Me', 'Projects', 'Experience', 'Skills', 'Education', 'Certificates', 'Messages', 'Site Settings'].map(item => (
               <li key={item}>
                 <button 
                   onClick={() => setActiveTab(item)}
@@ -195,6 +196,7 @@ const AdminDashboard = () => {
 
           {activeTab === 'Hero Section' && <HeroEditor />}
           {activeTab === 'Profile Info' && <ProfileEditor />}
+          {activeTab === 'About Me' && <AboutEditor />}
           {activeTab === 'Projects' && <ProjectsEditor />}
           {activeTab === 'Experience' && <ExperienceEditor />}
           {activeTab === 'Skills' && <SkillsEditor />}

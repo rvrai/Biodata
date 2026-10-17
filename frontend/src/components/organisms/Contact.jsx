@@ -1,20 +1,40 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { buildMailto } from '../../utils/format';
 import { portfolioService } from '../../services/api';
 import LiquidButton from '../atoms/LiquidButton';
+import ThankYouModal from './ThankYouModal';
 
 const Contact = ({ socialLinks }) => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [status, setStatus] = useState({ type: '', msg: '' });
+  const [consents, setConsents] = useState({ age: false, privacy: false });
+  const [showThanks, setShowThanks] = useState(false);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleConsentChange = (e) => setConsents({ ...consents, [e.target.name]: e.target.checked });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const mailtoLink = `mailto:rvrai1998@gmail.com?subject=${encodeURIComponent(formData.subject || 'Portfolio Contact')}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
+    if (!consents.age) {
+      setStatus({ type: 'error', msg: 'Please confirm you are 18 or older.' });
+      return;
+    }
+    if (!consents.privacy) {
+      setStatus({ type: 'error', msg: 'Please consent to the privacy policy to continue.' });
+      return;
+    }
+    const mailtoLink = buildMailto({
+      to: 'rvrai1998@gmail.com',
+      subject: formData.subject || 'Portfolio Contact',
+      body: `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`,
+    });
     window.location.href = mailtoLink;
     setStatus({ type: 'success', msg: 'Opening your email client...' });
     setFormData({ name: '', email: '', subject: '', message: '' });
+    setConsents({ age: false, privacy: false });
+    setShowThanks(true);
   };
 
   const workflowSteps = ['IDEA', 'PLAN', 'AI HELP', 'CODE', 'REVIEW', 'TEST', 'LEARN'];
@@ -87,20 +107,46 @@ const Contact = ({ socialLinks }) => {
         {/* Contact Form */}
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
           <form onSubmit={handleSubmit} className="glass" style={{ padding: '3rem', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h3 style={{ marginBottom: '1rem', fontSize: '1.5rem', fontFamily: 'JetBrains Mono', color: 'var(--accent-primary)' }}>Send a Message</h3>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Your Name" required style={inputStyle} />
-            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Your Email" required style={inputStyle} />
-            <input type="text" name="subject" value={formData.subject} onChange={handleChange} placeholder="Subject" style={inputStyle} />
-            <textarea name="message" value={formData.message} onChange={handleChange} placeholder="Your Message" required rows="5" style={{ ...inputStyle, resize: 'vertical' }}></textarea>
+            <h3 style={{ marginBottom: '0.5rem', fontSize: '1.5rem', fontFamily: 'JetBrains Mono', color: 'var(--accent-primary)' }}>Send a Message</h3>
+
+            <div>
+              <label htmlFor="contact-name" style={labelStyle}>Name</label>
+              <input id="contact-name" type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Your Name" required style={inputStyle} />
+            </div>
+
+            <div>
+              <label htmlFor="contact-email" style={labelStyle}>Email</label>
+              <input id="contact-email" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Your Email" required style={inputStyle} />
+            </div>
+
+            <div>
+              <label htmlFor="contact-subject" style={labelStyle}>Subject (optional)</label>
+              <input id="contact-subject" type="text" name="subject" value={formData.subject} onChange={handleChange} placeholder="Subject" style={inputStyle} />
+            </div>
+
+            <div>
+              <label htmlFor="contact-message" style={labelStyle}>Message</label>
+              <textarea id="contact-message" name="message" value={formData.message} onChange={handleChange} placeholder="Your Message" required rows="5" style={{ ...inputStyle, resize: 'vertical' }}></textarea>
+            </div>
+
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              <input type="checkbox" name="age" checked={consents.age} onChange={handleConsentChange} required style={{ marginTop: '3px' }} />
+              <span>I confirm I am 18 years of age or older.</span>
+            </label>
+
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              <input type="checkbox" name="privacy" checked={consents.privacy} onChange={handleConsentChange} required style={{ marginTop: '3px' }} />
+              <span>I consent to my message being handled as described in the <Link to="/legal/privacy" style={{ color: 'var(--accent-primary)' }}>Privacy Policy</Link>.</span>
+            </label>
             
-            <button type="submit" style={{ 
+            <button type="submit" aria-label="Send message" style={{ 
               padding: '1rem', 
               borderRadius: '12px', 
               background: 'var(--text-primary)', 
               color: 'var(--bg-primary)', 
               fontWeight: 'bold', 
               border: 'none', 
-              cursor: 'none',
+              cursor: 'pointer',
               fontFamily: 'JetBrains Mono',
               marginTop: '1rem',
               transition: 'transform 0.2s',
@@ -110,7 +156,9 @@ const Contact = ({ socialLinks }) => {
             >
               {status.type === 'loading' ? 'Sending...' : 'Transmit Message'}
             </button>
-            {status.msg && <div style={{ color: status.type === 'success' ? '#10b981' : '#ef4444', textAlign: 'center', marginTop: '1rem', fontFamily: 'JetBrains Mono', fontSize: '0.9rem' }}>{status.msg}</div>}
+            <div role="status" aria-live="polite">
+              {status.msg && <div style={{ color: status.type === 'success' ? '#16a34a' : '#dc2626', textAlign: 'center', marginTop: '0.5rem', fontFamily: 'JetBrains Mono', fontSize: '0.9rem' }}>{status.msg}</div>}
+            </div>
           </form>
         </motion.div>
 
@@ -153,6 +201,8 @@ const Contact = ({ socialLinks }) => {
           </div>
         </motion.div>
       </div>
+
+      <ThankYouModal open={showThanks} onClose={() => setShowThanks(false)} />
     </section>
   );
 };
@@ -168,6 +218,14 @@ const inputStyle = {
   fontFamily: 'inherit',
   fontSize: '1rem',
   transition: 'border-color 0.3s'
+};
+
+const labelStyle = {
+  display: 'block',
+  marginBottom: '6px',
+  fontSize: '0.85rem',
+  color: 'var(--text-secondary)',
+  fontWeight: 500,
 };
 
 export default Contact;

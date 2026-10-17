@@ -1,2 +1,4 @@
-// Shared hooks barrel file
-// Export all custom hooks from here
+// Shared hooks barrel file — ViewModels (MVVM).
+export { default as useAsync } from './useAsync';
+export { default as useAbout } from './useAbout';
+

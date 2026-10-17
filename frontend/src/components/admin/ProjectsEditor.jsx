@@ -197,7 +197,7 @@ const ProjectsEditor = () => {
                   overflow: 'hidden'
                 }}>
                   {form.project_icon && (form.project_icon.startsWith('http') || form.project_icon.startsWith('/') || form.project_icon.startsWith('data:')) ? (
-                    <img src={form.project_icon} alt="" style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
+                    <img src={form.project_icon} alt={form.project_name || 'Project icon'} style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
                   ) : (
                     <span style={{ fontSize: '1.2rem' }}>{form.project_icon || '📱'}</span>
                   )}
@@ -325,7 +325,7 @@ const ProjectsEditor = () => {
                        <>
                          <img 
                            src={item.project_icon} 
-                           alt="" 
+                           alt={item.project_name || 'Project icon'} 
                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                            onError={(e) => { 
                              e.target.style.display = 'none'; 

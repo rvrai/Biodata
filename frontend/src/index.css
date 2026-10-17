@@ -14,7 +14,7 @@
 
 body.light-theme {
   --bg-primary: #f8fafc;
-  --accent-primary: #0284c7;
+  --accent-primary: #0369a1;
   --accent-secondary: #0369a1;
   --accent-saffron: #d97706;
   
@@ -134,4 +134,53 @@ p {
 
 .animate-pulse-slow {
   animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* ── Accessibility ─────────────────────────────────────────────── */
+
+/* Visible keyboard focus indicator */
+:focus-visible {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip-to-content link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100001;
+  background: var(--accent-primary);
+  color: #000;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 8px 0;
+  font-weight: 700;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Touch devices keep the native cursor (custom cursor is mouse-only) */
+@media (hover: none) and (pointer: coarse) {
+  body,
+  a,
+  button,
+  input,
+  textarea {
+    cursor: auto !important;
+  }
 }

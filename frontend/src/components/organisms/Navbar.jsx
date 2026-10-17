@@ -52,10 +52,10 @@ const Navbar = ({ profile, sections }) => {
           textDecoration: 'none',
           paddingRight: '0.5rem'
         }}>
-          rajvaibhavrai.site
+          https://rajvaibhavrai.in
         </a>
 
-        <a href="#hero" style={{
+        <a href="#hero" aria-label="Home" style={{
           background: 'rgba(0, 217, 255, 0.1)',
           borderRadius: '10px',
           padding: '8px',
@@ -123,7 +123,12 @@ const Navbar = ({ profile, sections }) => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{ 
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Toggle light or dark theme"
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTheme(); } }}
+            style={{ 
             cursor: 'pointer', 
             color: 'var(--text-secondary)', 
             background: 'var(--glass-bg)',
@@ -144,7 +149,7 @@ const Navbar = ({ profile, sections }) => {
             )}
           </div>
 
-          <div className="mobile-menu-btn" style={{ 
+          <div className="mobile-menu-btn" role="button" tabIndex={0} aria-label="Menu" style={{ 
             cursor: 'pointer', 
             color: 'var(--text-secondary)', 
             background: 'rgba(255,255,255,0.05)',

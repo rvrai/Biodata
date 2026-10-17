@@ -5,6 +5,13 @@ import PortfolioView from './components/templates/PortfolioView';
 import LenisProvider from './components/providers/LenisProvider';
 import GlassCursor from './components/atoms/GlassCursor';
 import SplashScreen from './components/atoms/SplashScreen';
+import CookieConsent from './components/organisms/CookieConsent';
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import TermsOfService from './pages/legal/TermsOfService';
+import RefundPolicy from './pages/legal/RefundPolicy';
+import CookiePolicy from './pages/legal/CookiePolicy';
+import Licenses from './pages/legal/Licenses';
+import NotFound from './pages/NotFound';
 import './App.css';
 
 // Lazy load admin pages
@@ -66,9 +73,11 @@ function App() {
 
   return (
     <LenisProvider>
+      <a href="#main" className="skip-link">Skip to main content</a>
       <GlassCursor />
       <SplashScreen />
       <BrowserRouter>
+        <CookieConsent />
         <Suspense fallback={<div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#0a0a0a' }} />}>
           <Routes>
             <Route path="/" element={<PortfolioView />} />
@@ -84,6 +93,12 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+            <Route path="/legal/terms" element={<TermsOfService />} />
+            <Route path="/legal/refund" element={<RefundPolicy />} />
+            <Route path="/legal/cookies" element={<CookiePolicy />} />
+            <Route path="/legal/licenses" element={<Licenses />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
